@@ -1,0 +1,35 @@
+# Root level gitignore
+
+# Environment Variables (keep the copy/template)
+.env
+!env.copy.txt
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs at root level
+logs/
+*.log
+
+# Database files at root level
+chroma_db/
+*.sqlite3
+*.db
+
+# User data at root level
+uploads/
+previews/
+

@@ -1,0 +1,40 @@
+# FastAPI and server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Auth
+fastapi-users[sqlalchemy]==12.1.2
+bcrypt==4.1.1
+pyjwt==2.8.0
+
+# Database
+couchdb==1.2
+chromadb==0.4.22
+
+# Background tasks (using asyncio - no external dependencies)
+
+# PDF processing
+PyMuPDF==1.23.8
+pdfplumber==0.10.3
+Pillow==10.1.0
+
+# Text processing
+nltk==3.8.1
+spacy==3.7.2
+tiktoken==0.5.2
+
+# LLM providers
+openai==1.6.1
+anthropic>=0.40.0
+google-generativeai==0.3.2
+httpx==0.25.2
+
+# Logging
+loguru==0.7.2
+
+# Utils
+pydantic==2.5.2
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
