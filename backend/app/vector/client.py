@@ -11,10 +11,8 @@ from ..config import config
 class VectorDBClient:
     """ChromaDB client wrapper for vector operations."""
     
-    # Collection names for different embedding dimensions
-    COLLECTION_OPENAI_SMALL = "chunks_openai_small"  # 1536 dims
-    COLLECTION_OPENAI_ADA = "chunks_openai_ada"      # 1536 dims
-    COLLECTION_OLLAMA_NOMIC = "chunks_ollama_nomic"  # 768 dims
+    # ONLY ONE COLLECTION - text-embedding-3-small (1536 dims)
+    COLLECTION_OPENAI_SMALL = "chunks_openai_small"  # 1536 dims - ONLY EMBEDDING MODEL
     
     def __init__(self):
         """Initialize ChromaDB client."""
@@ -222,23 +220,15 @@ class VectorDBClient:
             logger.error(f"Error deleting chunks for {doc_id} from {collection_name}: {e}")
             # Don't raise - allow deletion to continue even if vector deletion fails
     
-    def get_collection_for_provider(self, provider: str) -> str:
-        """Get collection name for embedding provider."""
-        provider_map = {
-            "openai_small": self.COLLECTION_OPENAI_SMALL,
-            "openai_ada002": self.COLLECTION_OPENAI_ADA,
-            "ollama_nomic": self.COLLECTION_OLLAMA_NOMIC,
-        }
-        return provider_map.get(provider, self.COLLECTION_OPENAI_SMALL)
+    def get_collection_for_provider(self, provider: str = "openai_small") -> str:
+        """Get collection name - ALWAYS returns openai_small collection (text-embedding-3-small)."""
+        # Ignore provider parameter - we only use openai_small
+        return self.COLLECTION_OPENAI_SMALL
     
-    def get_vector_size_for_provider(self, provider: str) -> int:
-        """Get vector dimension for embedding provider."""
-        size_map = {
-            "openai_small": 1536,
-            "openai_ada002": 1536,
-            "ollama_nomic": 768,
-        }
-        return size_map.get(provider, 1536)
+    def get_vector_size_for_provider(self, provider: str = "openai_small") -> int:
+        """Get vector dimension - ALWAYS returns 1536 (text-embedding-3-small)."""
+        # Ignore provider parameter - we only use 1536-dim embeddings
+        return 1536
 
 
 # Global client instance
@@ -246,15 +236,9 @@ vector_client = VectorDBClient()
 
 
 def initialize_collections():
-    """Initialize all vector collections."""
+    """Initialize the ONLY vector collection (text-embedding-3-small)."""
     vector_client.create_collection_if_not_exists(
         VectorDBClient.COLLECTION_OPENAI_SMALL, 1536
     )
-    vector_client.create_collection_if_not_exists(
-        VectorDBClient.COLLECTION_OPENAI_ADA, 1536
-    )
-    vector_client.create_collection_if_not_exists(
-        VectorDBClient.COLLECTION_OLLAMA_NOMIC, 768
-    )
-    logger.info("All vector collections initialized")
+    logger.info("Vector collection initialized: chunks_openai_small (text-embedding-3-small)")
 

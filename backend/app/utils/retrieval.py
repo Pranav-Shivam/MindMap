@@ -52,6 +52,7 @@ class RetrievalEngine:
             List of relevant chunks with metadata
         """
         logger.info(f"Retrieving chunks for query: '{query[:50]}...' (scope: {scope_mode}, doc_id: {doc_id}, page_no: {page_no})")
+        logger.info(f"Using embedding_provider: {self.embedding_provider}, collection: {self.collection_name}")
         
         # Embed the query
         query_embedding = await self._embed_query(query)

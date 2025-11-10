@@ -50,18 +50,18 @@ export const authApi = {
 
 // Document endpoints
 export const documentsApi = {
-  upload: (file, embeddingProvider = 'openai_small', summaryLlmProvider = 'gpt', summaryLlmModel = 'gpt-4o-mini') => {
+  upload: (file, summaryLlmProvider = 'gpt', summaryLlmModel = 'gpt-4o-mini') => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('embedding_provider', embeddingProvider);
+    // Note: embedding_provider is ALWAYS openai_small (text-embedding-3-small) - handled by backend
     formData.append('summary_llm_provider', summaryLlmProvider);
     formData.append('summary_llm_model', summaryLlmModel);
     
     // Log what we're sending for debugging
     console.log('Uploading document with:', {
-      provider: summaryLlmProvider,
-      model: summaryLlmModel,
-      embedding: embeddingProvider
+      llm_provider: summaryLlmProvider,
+      llm_model: summaryLlmModel,
+      embedding: 'openai_small (text-embedding-3-small) - fixed'
     });
     
     const token = localStorage.getItem('auth_token');

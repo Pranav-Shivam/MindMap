@@ -29,7 +29,7 @@ function Header({ document, currentPage, onPageChange }) {
                 variant="ghost"
                 size="icon"
                 onClick={() => onPageChange(Math.max(0, currentPage - 1))}
-                disabled={currentPage === 0}
+                disabled={currentPage <= 0}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -41,7 +41,10 @@ function Header({ document, currentPage, onPageChange }) {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => onPageChange(currentPage + 1)}
+                onClick={() => {
+                  const maxPage = (document.page_count || 1) - 1;
+                  onPageChange(Math.min(maxPage, currentPage + 1));
+                }}
                 disabled={!document.page_count || currentPage >= document.page_count - 1}
               >
                 <ChevronRight className="h-4 w-4" />

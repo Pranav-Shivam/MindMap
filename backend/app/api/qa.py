@@ -25,7 +25,7 @@ class QuestionRequest(BaseModel):
     scope_mode: str = "page"
     llm_provider: Optional[str] = "gpt"
     llm_model: Optional[str] = None
-    embedding_provider: Optional[str] = "openai_small"
+    embedding_provider: Optional[str] = "openai_small"  # Always openai_small (text-embedding-3-small)
 
 
 @router.post("/documents/{doc_id}/page/{page_no}/qa")
@@ -68,13 +68,13 @@ async def ask_question_stream(
         async def generate_answer():
             """Generator function for SSE streaming."""
             try:
-                # Retrieve relevant chunks
+                # Retrieve relevant chunks - ALWAYS use openai_small
                 chunks, messages = await retrieve_for_question(
                     question=request.question,
                     doc_id=doc_id,
                     page_no=page_no,
                     scope_mode=request.scope_mode,
-                    embedding_provider=request.embedding_provider
+                    embedding_provider="openai_small"  # LOCKED to text-embedding-3-small
                 )
                 
                 if not chunks:
@@ -90,9 +90,9 @@ async def ask_question_stream(
                         from ..utils.embeddings import get_embedding_client
                         try:
                             # Create a dummy embedding just to check if chunks exist
-                            embedding_client = get_embedding_client(request.embedding_provider)
+                            embedding_client = get_embedding_client("openai_small")
                             dummy_embedding = await embedding_client.embed(["test"])
-                            collection_name = vector_client.get_collection_for_provider(request.embedding_provider)
+                            collection_name = vector_client.get_collection_for_provider("openai_small")
                             
                             # Try a simple search without page filter to see if any chunks exist for this doc
                             test_results = vector_client.search(

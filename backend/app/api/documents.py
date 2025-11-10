@@ -42,7 +42,6 @@ class UploadResponse(BaseModel):
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    embedding_provider: str = Form("openai_small"),
     summary_llm_provider: str = Form("gpt"),
     summary_llm_model: str = Form("gpt-4o-mini"),
     current_user: dict = Depends(get_current_user)
@@ -52,17 +51,19 @@ async def upload_document(
     
     Args:
         file: PDF file
-        embedding_provider: Embedding provider to use
         summary_llm_provider: LLM provider for summarization
         summary_llm_model: LLM model for summarization
         current_user: Current authenticated user
     
     Returns:
         Document ID and job ID
+    
+    Note:
+        Embedding provider is ALWAYS openai_small (text-embedding-3-small) - no configuration needed
     """
     try:
         # Log received parameters for debugging
-        logger.info(f"Upload request received - Provider: {summary_llm_provider}, Model: {summary_llm_model}, Embedding: {embedding_provider}")
+        logger.info(f"Upload request received - LLM Provider: {summary_llm_provider}, Model: {summary_llm_model}, Embedding: openai_small (text-embedding-3-small)")
         
         # Validate file type
         if not file.filename.lower().endswith('.pdf'):
@@ -97,11 +98,15 @@ async def upload_document(
         
         couch_client.save_doc(config.documents_db, doc)
         
+        # ALWAYS use openai_small (text-embedding-3-small) - no other options
+        EMBEDDING_PROVIDER = "openai_small"
+        logger.info(f"Using embedding provider: {EMBEDDING_PROVIDER} (text-embedding-3-small)")
+        
         # Enqueue ingestion job as background task
         job_id = enqueue_ingestion(
             background_tasks=background_tasks,
             doc_id=doc_id,
-            embedding_provider=embedding_provider,
+            embedding_provider=EMBEDDING_PROVIDER,
             summary_llm_provider=summary_llm_provider,
             summary_llm_model=summary_llm_model
         )
@@ -367,20 +372,14 @@ async def delete_document(
             if qa_id and couch_client.delete_doc(config.qa_db, qa_id):
                 deletion_summary["qa_records"] += 1
         
-        # 3. Delete vector embeddings from all collections
+        # 3. Delete vector embeddings from the ONLY collection
         from ..vector import vector_client
-        collections_to_check = [
-            vector_client.COLLECTION_OPENAI_SMALL,
-            vector_client.COLLECTION_OPENAI_ADA,
-            vector_client.COLLECTION_OLLAMA_NOMIC,
-        ]
-        
-        for collection_name in collections_to_check:
-            try:
-                vector_client.delete_document_chunks(collection_name, doc_id)
-                deletion_summary["vector_chunks"] += 1  # Count as 1 per collection
-            except Exception as e:
-                logger.warning(f"Failed to delete chunks from {collection_name} for {doc_id}: {e}")
+        try:
+            vector_client.delete_document_chunks(vector_client.COLLECTION_OPENAI_SMALL, doc_id)
+            deletion_summary["vector_chunks"] = 1
+            logger.info(f"Deleted vector chunks from {vector_client.COLLECTION_OPENAI_SMALL}")
+        except Exception as e:
+            logger.warning(f"Failed to delete chunks for {doc_id}: {e}")
         
         # 4. Delete PDF file
         file_path = doc.get("file_path")

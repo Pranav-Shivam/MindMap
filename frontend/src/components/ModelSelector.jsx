@@ -54,7 +54,9 @@ function ModelSelector() {
   const getEmbeddingDisplayName = (provider) => {
     switch (provider) {
       case 'openai_small': return 'OpenAI Small';
+      case 'openai_ada002': return 'OpenAI Ada-002';
       case 'openai_large': return 'OpenAI Large';
+      case 'ollama_nomic': return 'Ollama Nomic';
       case 'ollama': return 'Ollama';
       case 'google': return 'Google';
       default: return provider;
@@ -71,7 +73,7 @@ function ModelSelector() {
       >
         <Settings className="h-4 w-4" />
         <span className="text-sm">
-          {getProviderDisplayName(llmProvider)} | {getEmbeddingDisplayName(embeddingProvider)}
+          {getProviderDisplayName(llmProvider)}
         </span>
       </Button>
     );
@@ -135,25 +137,18 @@ function ModelSelector() {
                 </div>
               )}
 
-              {/* Embedding Provider Selection */}
+              {/* Embedding Provider - LOCKED to openai_small */}
               <div className="space-y-3">
                 <label className="text-sm font-medium">Embedding Provider</label>
-                <Select value={embeddingProvider} onValueChange={handleEmbeddingProviderChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select embedding provider" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(embeddingProviders).map(([key, provider]) => (
-                      <SelectItem key={key} value={key} disabled={!provider.available}>
-                        <div className="flex items-center gap-2">
-                          {provider.available && <Check className="h-3 w-3 text-green-500" />}
-                          {!provider.available && <X className="h-3 w-3 text-red-500" />}
-                          {getEmbeddingDisplayName(key)}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="rounded-lg bg-muted p-3 text-sm border">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="font-medium">OpenAI text-embedding-3-small</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Locked • 1536 dimensions
+                  </p>
+                </div>
               </div>
 
               {/* Provider Info */}
@@ -161,7 +156,7 @@ function ModelSelector() {
                 <div className="rounded-lg bg-muted p-3 text-sm">
                   <p className="font-medium mb-1">Current Selection:</p>
                   <p>LLM: {getProviderDisplayName(llmProvider)} ({llmModel})</p>
-                  <p>Embeddings: {getEmbeddingDisplayName(embeddingProvider)}</p>
+                  <p>Embeddings: text-embedding-3-small (Locked)</p>
                 </div>
               )}
 

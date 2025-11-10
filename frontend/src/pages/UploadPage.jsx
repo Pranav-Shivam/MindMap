@@ -16,12 +16,11 @@ function UploadPage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedLlmProvider, setSelectedLlmProvider] = useState('gpt');
   const [selectedLlmModel, setSelectedLlmModel] = useState('gpt-4o-mini');
-  const [selectedEmbeddingProvider, setSelectedEmbeddingProvider] = useState('openai_small');
+  // Embedding provider is LOCKED to openai_small (text-embedding-3-small)
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
-  const embeddingProvider = useSettingsStore((state) => state.embeddingProvider);
 
   // Fetch available providers
   const { data: providers } = useQuery({
@@ -43,7 +42,7 @@ function UploadPage() {
 
   // Upload mutation
   const uploadMutation = useMutation({
-    mutationFn: (file) => documentsApi.upload(file, selectedEmbeddingProvider, selectedLlmProvider, selectedLlmModel),
+    mutationFn: (file) => documentsApi.upload(file, selectedLlmProvider, selectedLlmModel),
     onSuccess: (response) => {
       const docId = response.data.doc_id;
       refetch();
@@ -263,7 +262,7 @@ function UploadPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.3 }}
-                    className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
                   >
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">LLM Provider</Label>
@@ -326,24 +325,22 @@ function UploadPage() {
                         </p>
                       )}
                     </div>
+                  </motion.div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Embedding Provider</Label>
-                      <Select value={selectedEmbeddingProvider} onValueChange={setSelectedEmbeddingProvider}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Select embedding provider" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {providers?.embedding_providers && Object.entries(providers.embedding_providers).map(([key, provider]) => (
-                            provider.available && (
-                              <SelectItem key={key} value={key}>
-                                {key.replace('_', ' ').toUpperCase()}
-                              </SelectItem>
-                            )
-                          ))}
-                        </SelectContent>
-                      </Select>
+                  {/* Embedding Info - Locked */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25, duration: 0.3 }}
+                    className="rounded-lg bg-muted/50 p-4 border"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium">Embedding Model</span>
                     </div>
+                    <p className="text-sm text-muted-foreground">
+                      Using <span className="font-medium text-foreground">text-embedding-3-small</span> (OpenAI • 1536 dimensions)
+                    </p>
                   </motion.div>
 
                   <motion.div

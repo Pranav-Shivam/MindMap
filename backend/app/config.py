@@ -48,7 +48,7 @@ class Config:
     
     # Defaults
     default_llm_provider: str
-    default_embedding_provider: str
+    # Embedding is LOCKED to openai_small (text-embedding-3-small) - no other options
 
     # Ingestion
     ingestion_concurrency: int
@@ -91,7 +91,7 @@ class Config:
         
         # Defaults
         default_llm_provider = os.getenv("DEFAULT_LLM_PROVIDER", "gpt")
-        default_embedding_provider = os.getenv("DEFAULT_EMBEDDING_PROVIDER", "openai_small")
+        # Embedding is LOCKED to openai_small - ignore any env var
 
         # Ingestion
         ingestion_concurrency = int(os.getenv("INGESTION_CONCURRENCY", "4"))
@@ -130,7 +130,6 @@ class Config:
             upload_dir=upload_dir,
             preview_dir=preview_dir,
             default_llm_provider=default_llm_provider,
-            default_embedding_provider=default_embedding_provider,
             ingestion_concurrency=ingestion_concurrency,
             page_batch_size=page_batch_size,
         )

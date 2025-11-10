@@ -45,20 +45,27 @@ function StudyPanel({ docId, pageNo, pageData }) {
   const filteredQA = pageData?.qa?.filter(filterQAByPage) || [];
   
   // Pagination for Q&A
-  const totalQAPages = Math.ceil(filteredQA.length / qaPerPage);
-  const paginatedQA = filteredQA.slice(qaPage * qaPerPage, (qaPage + 1) * qaPerPage);
+  const totalQAPages = Math.max(1, Math.ceil(filteredQA.length / qaPerPage));
+  const safeQaPage = Math.min(qaPage, totalQAPages - 1);
+  const paginatedQA = filteredQA.slice(safeQaPage * qaPerPage, (safeQaPage + 1) * qaPerPage);
   
-  // Reset to first page when pageNo changes
+  // Reset to first page when pageNo changes or when filteredQA length changes
   useEffect(() => {
     setQaPage(0);
   }, [pageNo]);
+  
+  // Ensure qaPage doesn't exceed bounds when Q&A list changes
+  useEffect(() => {
+    if (qaPage >= totalQAPages && totalQAPages > 0) {
+      setQaPage(Math.max(0, totalQAPages - 1));
+    }
+  }, [filteredQA.length, qaPage, totalQAPages]);
 
   const handleAsk = async () => {
     if (!question.trim() || isStreaming) return;
 
-    // Use the document's embedding provider (from pageData) instead of settings
-    // This ensures we search in the correct collection where chunks were stored during ingestion
-    const docEmbeddingProvider = pageData?.embedding_provider || embeddingProvider;
+    // ALWAYS use openai_small for embeddings (text-embedding-3-small)
+    const forcedEmbeddingProvider = 'openai_small';
 
     await streamAnswer({
       docId,
@@ -67,7 +74,7 @@ function StudyPanel({ docId, pageNo, pageData }) {
       scopeMode,
       llmProvider,
       llmModel,
-      embeddingProvider: docEmbeddingProvider,
+      embeddingProvider: forcedEmbeddingProvider,
     });
 
     // Refresh page data to show new Q&A
@@ -311,8 +318,8 @@ function StudyPanel({ docId, pageNo, pageData }) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setQaPage(Math.max(0, qaPage - 1))}
-                disabled={qaPage === 0}
+                onClick={() => setQaPage(Math.max(0, safeQaPage - 1))}
+                disabled={safeQaPage === 0}
                 className="h-8"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
@@ -320,14 +327,14 @@ function StudyPanel({ docId, pageNo, pageData }) {
               </Button>
 
               <span className="text-sm text-muted-foreground">
-                Page {qaPage + 1} of {totalQAPages}
+                Page {safeQaPage + 1} of {Math.ceil(filteredQA.length / qaPerPage)}
               </span>
 
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setQaPage(Math.min(totalQAPages - 1, qaPage + 1))}
-                disabled={qaPage >= totalQAPages - 1}
+                onClick={() => setQaPage(Math.min(Math.ceil(filteredQA.length / qaPerPage) - 1, safeQaPage + 1))}
+                disabled={safeQaPage >= Math.ceil(filteredQA.length / qaPerPage) - 1}
                 className="h-8"
               >
                 Next

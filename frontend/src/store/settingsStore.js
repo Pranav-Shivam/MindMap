@@ -8,7 +8,7 @@ const useSettingsStore = create(
       llmProvider: 'gpt',
       llmModel: 'gpt-4o-mini',
       
-      // Embedding settings
+      // Embedding settings - LOCKED to openai_small (text-embedding-3-small)
       embeddingProvider: 'openai_small',
       
       // Scope mode

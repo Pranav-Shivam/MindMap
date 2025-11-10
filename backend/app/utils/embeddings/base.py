@@ -6,10 +6,8 @@ from enum import Enum
 
 
 class EmbeddingProvider(str, Enum):
-    """Embedding provider options."""
-    OPENAI_SMALL = "openai_small"
-    OPENAI_ADA002 = "openai_ada002"
-    OLLAMA_NOMIC = "ollama_nomic"
+    """Embedding provider - ONLY ONE option: text-embedding-3-small."""
+    OPENAI_SMALL = "openai_small"  # text-embedding-3-small (1536 dims) - ONLY OPTION
 
 
 class EmbeddingClient(Protocol):

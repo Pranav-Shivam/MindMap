@@ -10,77 +10,50 @@ from .exceptions import ProviderNotAvailableError, EmbeddingError
 from ...config import config
 
 
-def get_embedding_client(provider: str) -> EmbeddingClient:
+def get_embedding_client(provider: str = "openai_small") -> EmbeddingClient:
     """
-    Factory function to get an embedding client for the specified provider.
+    Factory function to get THE embedding client (text-embedding-3-small ONLY).
     
     Args:
-        provider: Provider name ('openai_small', 'openai_ada002', 'ollama_nomic')
+        provider: Ignored - always returns text-embedding-3-small client
     
     Returns:
-        EmbeddingClient instance
+        OpenAI text-embedding-3-small client
     
     Raises:
-        ProviderNotAvailableError: If provider is not configured
+        ProviderNotAvailableError: If OpenAI API key is not configured
         EmbeddingError: If client creation fails
     """
-    provider = provider.lower()
-    
+    # ALWAYS use text-embedding-3-small - ignore provider parameter
     try:
-        if provider == EmbeddingProvider.OPENAI_SMALL:
-            if not config.openai_api_key:
-                raise ProviderNotAvailableError("OpenAI API key not configured")
-            return OpenAIEmbeddingClient(model="text-embedding-3-small")
-        
-        elif provider == EmbeddingProvider.OPENAI_ADA002:
-            if not config.openai_api_key:
-                raise ProviderNotAvailableError("OpenAI API key not configured")
-            return OpenAIEmbeddingClient(model="text-embedding-ada-002")
-        
-        elif provider == EmbeddingProvider.OLLAMA_NOMIC:
-            if not config.allow_local_ollama:
-                raise ProviderNotAvailableError("Ollama is disabled by configuration")
-            return OllamaEmbeddingClient(model="nomic-embed-text")
-        
-        else:
-            raise ProviderNotAvailableError(f"Unknown embedding provider: {provider}")
+        if not config.openai_api_key:
+            raise ProviderNotAvailableError("OpenAI API key not configured")
+        return OpenAIEmbeddingClient(model="text-embedding-3-small")
     
     except ProviderNotAvailableError:
         raise
     except Exception as e:
-        logger.error(f"Error creating embedding client for {provider}: {e}")
-        raise EmbeddingError(f"Failed to create {provider} embedding client: {str(e)}")
+        logger.error(f"Error creating text-embedding-3-small client: {e}")
+        raise EmbeddingError(f"Failed to create embedding client: {str(e)}")
 
 
 def get_available_embedding_providers() -> dict:
     """
-    Get list of available embedding providers based on configuration.
+    Get THE ONLY embedding provider (text-embedding-3-small).
     
     Returns:
-        Dictionary with provider availability and dimensions
+        Dictionary with the single embedding provider
     """
     providers = {}
     
+    # ONLY one embedding provider - text-embedding-3-small
     if config.openai_api_key:
         providers["openai_small"] = {
             "available": True,
             "model": "text-embedding-3-small",
             "dimension": 1536,
-            "collection": "chunks_openai_small"
-        }
-        providers["openai_ada002"] = {
-            "available": True,
-            "model": "text-embedding-ada-002",
-            "dimension": 1536,
-            "collection": "chunks_openai_ada"
-        }
-    
-    if config.allow_local_ollama:
-        providers["ollama_nomic"] = {
-            "available": True,
-            "model": "nomic-embed-text",
-            "dimension": 768,
-            "collection": "chunks_ollama_nomic"
+            "collection": "chunks_openai_small",
+            "locked": True  # This is the only option
         }
     
     return providers
