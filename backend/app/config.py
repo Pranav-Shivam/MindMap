@@ -49,6 +49,10 @@ class Config:
     # Defaults
     default_llm_provider: str
     default_embedding_provider: str
+
+    # Ingestion
+    ingestion_concurrency: int
+    page_batch_size: int
     
     @classmethod
     def from_env(cls) -> "Config":
@@ -88,6 +92,10 @@ class Config:
         # Defaults
         default_llm_provider = os.getenv("DEFAULT_LLM_PROVIDER", "gpt")
         default_embedding_provider = os.getenv("DEFAULT_EMBEDDING_PROVIDER", "openai_small")
+
+        # Ingestion
+        ingestion_concurrency = int(os.getenv("INGESTION_CONCURRENCY", "4"))
+        page_batch_size = int(os.getenv("PAGE_BATCH_SIZE", "10"))
         
         # Create directories if they don't exist
         os.makedirs(upload_dir, exist_ok=True)
@@ -123,6 +131,8 @@ class Config:
             preview_dir=preview_dir,
             default_llm_provider=default_llm_provider,
             default_embedding_provider=default_embedding_provider,
+            ingestion_concurrency=ingestion_concurrency,
+            page_batch_size=page_batch_size,
         )
 
 
