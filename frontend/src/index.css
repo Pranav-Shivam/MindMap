@@ -83,3 +83,202 @@
   }
 }
 
+/* KaTeX Math Rendering Styles */
+.katex {
+  font-size: 1.1em;
+}
+
+.katex-display {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5em 0;
+}
+
+.katex-display > .katex {
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+  text-align: initial;
+}
+
+/* Dark mode KaTeX adjustments */
+.dark .katex {
+  color: hsl(var(--foreground));
+}
+
+.dark .katex .base {
+  color: hsl(var(--foreground));
+}
+
+.dark .katex .mord {
+  color: hsl(var(--foreground));
+}
+
+/* Code block enhancements */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Light mode code highlighting */
+:root .hljs {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Dark mode code highlighting adjustments */
+.dark .hljs {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-literal,
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-doctag,
+.dark .hljs-type,
+.dark .hljs-name,
+.dark .hljs-strong {
+  color: #c792ea;
+}
+
+.dark .hljs-string,
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-built_in,
+.dark .hljs-literal,
+.dark .hljs-type,
+.dark .hljs-addition,
+.dark .hljs-tag,
+.dark .hljs-quote,
+.dark .hljs-name,
+.dark .hljs-selector-id,
+.dark .hljs-selector-class {
+  color: #c3e88d;
+}
+
+.dark .hljs-comment,
+.dark .hljs-deletion,
+.dark .hljs-meta {
+  color: #546e7a;
+}
+
+.dark .hljs-number,
+.dark .hljs-regexp,
+.dark .hljs-symbol,
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-link,
+.dark .hljs-selector-attr,
+.dark .hljs-selector-pseudo {
+  color: #f78c6c;
+}
+
+.dark .hljs-attribute {
+  color: #ffcb6b;
+}
+
+.dark .hljs-function,
+.dark .hljs-class .hljs-title {
+  color: #82aaff;
+}
+
+/* Table scrollbar styling */
+.prose table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.prose table thead,
+.prose table tbody,
+.prose table tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* VS Code-style markdown content - Crystal clear rendering */
+.markdown-content {
+  /* Perfect text rendering like VS Code */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga" 1, "calt" 1;
+  
+  /* Improved readability */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  
+  /* VS Code-like clarity */
+  color: hsl(var(--foreground));
+  line-height: 1.6;
+}
+
+/* Better code block styling */
+.markdown-content pre {
+  position: relative;
+}
+
+.markdown-content code {
+  font-variant-ligatures: none;
+}
+
+/* Improved list styling */
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  word-wrap: break-word;
+}
+
+/* Better table rendering */
+.markdown-content table {
+  font-variant-numeric: tabular-nums;
+}
+
+/* VS Code-style math rendering - crystal clear */
+.markdown-content .katex {
+  font-size: 1.05em;
+  color: hsl(var(--foreground));
+}
+
+.markdown-content .katex-display {
+  margin: 1.5em 0;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-content .katex-display > .katex {
+  text-align: initial;
+  display: inline-block;
+}
+
+/* Inline math styling */
+.markdown-content .katex:not(.katex-display) {
+  font-size: 1.05em;
+  padding: 0 2px;
+}
+
+/* Better blockquote styling */
+.markdown-content blockquote p {
+  margin: 0;
+}
+
+.markdown-content blockquote p + p {
+  margin-top: 0.5rem;
+}
+

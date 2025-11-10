@@ -129,9 +129,9 @@ function StudyPanel({ docId, pageNo, pageData }) {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                   >
                     <CardContent className="pt-0">
-                      <p className="text-sm leading-relaxed text-muted-foreground">
+                      <Markdown className="text-sm leading-relaxed">
                         {pageData.summary}
-                      </p>
+                      </Markdown>
                     </CardContent>
                   </motion.div>
                 )}
