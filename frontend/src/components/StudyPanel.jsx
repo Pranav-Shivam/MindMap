@@ -8,7 +8,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Markdown } from './ui/markdown';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Send, Copy, Loader2, BookOpen, MessageSquare, Sparkles, ChevronLeft, ChevronRight, History } from 'lucide-react';
+import { ChevronDown, ChevronUp, Send, Copy, Loader2, BookOpen, MessageSquare, Sparkles, ChevronLeft, ChevronRight, History, Check } from 'lucide-react';
 
 function StudyPanel({ docId, pageNo, pageData }) {
   const [question, setQuestion] = useState('');
@@ -17,7 +17,7 @@ function StudyPanel({ docId, pageNo, pageData }) {
   const qaPerPage = 5;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
+  const [copied, setCopied] = useState(false);
   const { llmProvider, llmModel, embeddingProvider, scopeMode } = useSettingsStore();
   const { streamAnswer, currentAnswer, isStreaming } = useStreamingQA();
 
@@ -105,19 +105,38 @@ function StudyPanel({ docId, pageNo, pageData }) {
                     <BookOpen className="w-5 h-5 text-primary" />
                     Page Summary
                   </CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowExplanation(!showExplanation)}
-                    className="h-8 w-8 p-0"
-                  >
-                    <motion.div
-                      animate={{ rotate: showExplanation ? 0 : 180 }}
-                      transition={{ duration: 0.2 }}
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(pageData.summary);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="h-8 w-8 p-0"
+                      title="Copy summary"
                     >
-                      <ChevronDown className="h-4 w-4" />
-                    </motion.div>
-                  </Button>
+                      {copied ? (
+                        <Check className="h-3.5 w-3.5 text-green-500" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowExplanation(!showExplanation)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <motion.div
+                        animate={{ rotate: showExplanation ? 0 : 180 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </motion.div>
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <AnimatePresence>
@@ -403,4 +422,3 @@ function StudyPanel({ docId, pageNo, pageData }) {
 }
 
 export default StudyPanel;
-
