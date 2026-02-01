@@ -105,7 +105,7 @@ export const documentsApi = {
 
 // Page endpoints
 export const pagesApi = {
-  list: (docId, offset = 0, limit = 100) => {
+  list: (docId, offset = 0, limit = 200) => {
     const token = localStorage.getItem('auth_token');
     return axios.get(`${baseUrl}/api/documents/${docId}/pages`, { 
       params: { offset, limit },
